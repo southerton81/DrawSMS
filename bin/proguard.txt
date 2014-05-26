@@ -1,0 +1,21 @@
+# view res/layout/main.xml #generated:72
+-keep class test.nba.CNetView { <init>(...); }
+
+# view res/layout/item.xml #generated:2
+-keep class test.nba.CheckableLinearLayout { <init>(...); }
+
+# view AndroidManifest.xml #generated:7
+-keep class test.nba.MainActivity { <init>(...); }
+
+# onClick res/layout/main.xml #generated:60
+-keepclassmembers class * { *** OnErase(...); }
+
+# onClick res/layout/main.xml #generated:49
+-keepclassmembers class * { *** OnMove(...); }
+
+# onClick res/layout/main.xml #generated:39
+-keepclassmembers class * { *** OnRedo(...); }
+
+# onClick res/layout/main.xml #generated:29
+-keepclassmembers class * { *** OnUndo(...); }
+
