@@ -1,0 +1,156 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+              xmlns:ads="http://schemas.android.com/apk/lib/com.google.ads"
+              android:layout_width="fill_parent"
+              android:layout_height="fill_parent"
+              android:background="#FFFFFF">
+    
+    <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+                  android:orientation="vertical"
+                  android:layout_width="fill_parent"
+                  android:layout_height="fill_parent"
+                  >
+   
+        <GridView
+            android:id="@+id/SymbolsGrid"    
+            android:layout_width="fill_parent"
+            android:layout_height="100dp"
+            android:numColumns="10"
+            android:horizontalSpacing="1dp"
+            android:verticalSpacing="1dp"
+            android:gravity="center"
+            android:listSelector="#00000000"
+            android:background="#FFFFFF">
+        </GridView> 
+        
+           
+        <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+                      xmlns:ads="http://schemas.android.com/apk/lib/com.google.ads"
+                      android:orientation="vertical"
+                      android:layout_width="fill_parent"
+                      android:layout_height="wrap_content">       
+            <com.google.ads.AdView 
+                android:layout_height="wrap_content"
+                android:layout_width="fill_parent"
+                xmlns:ads="http://schemas.android.com/apk/lib/com.google.ads"
+                ads:loadAdOnCreate="true"
+                ads:adUnitId="a1529b7444e7f6a"
+                ads:adSize="SMART_BANNER"
+                android:layout_alignParentBottom="true"
+                android:id="@+id/ad"
+            />
+        </LinearLayout>
+        
+        <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+                      android:orientation="horizontal"
+                      android:layout_width="fill_parent"
+                      android:layout_height="fill_parent">
+        
+            <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+                          android:orientation="vertical"
+                          android:layout_width="0dp"
+                          android:layout_height="fill_parent"
+                          android:layout_marginTop="1dp"
+                          android:layout_marginBottom="1dp"
+                          android:layout_weight="1">
+               
+                <Button
+                    android:id="@+id/ButtonUndo"
+                    android:layout_width="fill_parent"
+                    android:layout_height="wrap_content"
+                    android:text="@string/undo_label"
+                    android:background="@drawable/button_drawable"
+                    android:textColor="@drawable/button_text"
+                    android:onClick="OnUndo"
+                    android:layout_marginRight="1dp"
+                    android:layout_weight="1"
+                />
+               
+                <Button
+                    android:id="@+id/ButtonRedo"
+                    android:layout_width="fill_parent"
+                    android:layout_height="wrap_content"
+                    android:text="@string/redo_label"
+                    android:background="@drawable/button_drawable"
+                    android:textColor="@drawable/button_text"
+                    android:onClick="OnRedo"
+                    android:layout_marginRight="1dp"
+                    android:layout_weight="1"
+                />
+                   
+                <ToggleButton
+                    android:id="@+id/ButtonMove"
+                    android:layout_width="fill_parent"
+                    android:layout_height="wrap_content"
+                    android:background="@drawable/button_drawable"
+                    android:textColor="@drawable/button_text"
+                    android:textOn="@string/move_label"
+                    android:textOff="@string/move_label"
+                    android:onClick="OnMove"
+                    android:layout_marginRight="1dp"
+                    android:layout_weight="1"
+                />
+            
+                <ToggleButton
+                    android:id="@+id/ButtonErase"
+                    android:layout_width="fill_parent"
+                    android:layout_height="wrap_content"
+                    android:background="@drawable/button_drawable"
+                    android:textColor="@drawable/button_text"
+                    android:textOn="@string/erase_label"
+                    android:textOff="@string/erase_label"
+                    android:onClick="OnErase"
+                    android:longClickable="true"
+                    android:layout_weight="1"
+                />      
+            </LinearLayout>
+              
+            <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+                          android:orientation="vertical"
+                          android:layout_width="0dp"
+                          android:layout_height="wrap_content"
+                          android:layout_weight="3"> 
+                <com.kurovsky.drawsms.CNetView  
+                    android:id="@+id/CNetView"
+                    android:layout_width="fill_parent" 
+                    android:layout_height="wrap_content" 
+                    android:background="#FFFFFF"
+                />
+            </LinearLayout> 
+        
+            <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+                          android:orientation="vertical"
+                          android:layout_width="0dp"
+                          android:layout_height="fill_parent"
+                          android:layout_marginTop="1dp"
+                          android:layout_marginBottom="1dp"
+                          android:layout_weight="1">
+            
+                <Button
+                    android:id="@+id/ButtonReadSMS"
+                    android:layout_width="wrap_content"
+                    android:layout_height="0dp"
+                    android:text="@string/view_sms_label"
+                    android:background="@drawable/button_drawable"
+                    android:textColor="@drawable/button_text"
+                    android:onClick="OnOpenSMS"
+                    android:layout_marginRight="1dp"
+                    android:layout_weight="1"
+                />
+                
+                <Button
+                    android:id="@+id/ButtonSendSMS"
+                    android:layout_width="wrap_content"
+                    android:layout_height="0dp"
+                    android:text="@string/send_sms_label"
+                    android:background="@drawable/button_drawable"
+                    android:textColor="@drawable/button_text"
+                    android:onClick="OnSendSMS"
+                    android:layout_marginRight="1dp"
+                    android:layout_weight="1"
+                />       
+            </LinearLayout>
+        </LinearLayout> 
+    </LinearLayout>
+</LinearLayout>
+

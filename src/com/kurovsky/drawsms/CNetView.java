@@ -1,8 +1,4 @@
-/*
- * To change this template, choose Tools | Templates
- * and open the template in the editor.
- */
-package test.nba;
+package com.kurovsky.drawsms;
 
 import android.content.Context;
 import android.graphics.Canvas;
@@ -10,36 +6,37 @@ import android.graphics.Color;
 import android.graphics.Paint;
 import android.graphics.Paint.Align;
 import android.graphics.Point;
-import android.graphics.Rect;
+import android.graphics.RectF;
 import android.util.AttributeSet;
-import android.util.Log;
 import android.view.MotionEvent;
 import android.view.View;
-import android.view.View.OnClickListener;
 import android.view.ViewGroup;
-import android.widget.Button;
 
 public class CNetView extends View {
-
-    MainActivity mMainActivity;
+    DrawSMS mMainActivity;
     CNet mMainNet;
-    
     CNet mMoveNet;
+    //CNet mDemoNet;
     Point mSymbolSize;
     Point mFirst;
     Paint mPaint = new Paint();
     Paint mPaintMove = new Paint();
-    Rect  mHighlightRect = new Rect();
-    boolean mFlag = false;
+    Paint mPaintHighlight = new Paint();
+    RectF mHighlightRect = new RectF();
     char mSymbol[] = new char[1];
     int mHighlightX = -1;
     int mHighlightY = -1;
-    Point mDownPoint = new Point(0,0);
+    Point mDownPoint = new Point(0, 0);
+    Point mSize = new Point(0,0);
+    
+    double mPixelsPerMillisecond;
+    long   mLastTime;
 
     public CNetView(Context context, AttributeSet attr) {
         super(context, attr);
-        mMainActivity = ((MainActivity) context);
-        mMainNet = mMainActivity.GetMainNet();
+        mMainActivity = ((DrawSMS) context);
+        mMainNet = mMainActivity.GetMainNet();            
+        //mDemoNet = mMainActivity.GetDemoNet();
     }
 
     protected void onSizeChanged(int xNew, int yNew, int xOld, int yOld) {
@@ -51,6 +48,7 @@ public class CNetView extends View {
         int W = xNew - Xpad - Lp.rightMargin - Lp.leftMargin;
         int H = yNew - Ypad - Lp.topMargin - Lp.bottomMargin;
 
+        mSize.set(xNew, yNew);
         mSymbolSize = new Point(W / mMainNet.GetSize().x, H / mMainNet.GetSize().y);
         mFirst = new Point(mSymbolSize.x / 2, mSymbolSize.y);
         mPaint.setTextSize(Math.min(mSymbolSize.x, mSymbolSize.y));
@@ -58,26 +56,57 @@ public class CNetView extends View {
         mPaint.setTextAlign(Align.CENTER);
         mPaint.setShadowLayer(1.0f, 0f, 0f, Color.rgb(254, 254, 254));
         mPaint.setColor(Color.rgb(0, 0, 0));
-        
+
         mPaintMove.set(mPaint);
         mPaintMove.setColor(Color.rgb(127, 127, 127));
+        
+        mPaintHighlight.setColor(Color.parseColor("#FFFF00"));
+        
+        mPixelsPerMillisecond = (double)xNew / (double)5000.;
+        mLastTime = 0;
     }
 
-    /*protected void onMeasure(int widthMeasureSpec, int heightMeasureSpec) {
-     super.onMeasure(widthMeasureSpec, heightMeasureSpec);
-     int size = 0;
-     int width = getMeasuredWidth();
-     int height = getMeasuredHeight();
+    /*public void OnDrawDemoNet(Canvas canvas) {
+        int OffsetX = mFirst.x;
+        if (mLastTime != 0) {
+            double TimeLapse = System.currentTimeMillis() - mLastTime;
+            double PixelsOffset = (TimeLapse * mPixelsPerMillisecond);
+            OffsetX += PixelsOffset;
+        }
 
-     if (width > height) {
-     size = height;
-     } else {
-     size = width;
-     }
+        for (int w = 0; w < mDemoNet.GetSize().x; w++) {
+            for (int h = 0; h < mDemoNet.GetSize().y; h++) {
+                mSymbol[0] = mDemoNet.mNetCharacters[w][h];
 
-     setMeasuredDimension(size, size);
-     }*/
-    public void onDraw(Canvas canvas) {
+                mLastTime = System.currentTimeMillis();
+                canvas.drawText(mSymbol, 0, 1, OffsetX + (mSymbolSize.x * w),
+                        mFirst.y + (mSymbolSize.y * h), mPaintMove);
+            }
+        }
+    }*/
+    
+    public void onDrawMoveNet(Canvas canvas){
+        for (int w = 0; w < mMoveNet.GetSize().x; w++) {
+            for (int h = 0; h < mMoveNet.GetSize().y; h++) {
+                mSymbol[0] = mMoveNet.mNetCharacters[w][h];
+                canvas.drawText(mSymbol, 0, 1, mFirst.x + (mSymbolSize.x * w),
+                        mFirst.y + (mSymbolSize.y * h), mPaintMove);
+            }
+        }
+    }
+    
+    public void onDrawMainNet(Canvas canvas){     
+        if (mHighlightX != -1) {
+            int x = mSymbolSize.x * mHighlightX;
+            int y = mSymbolSize.y * mHighlightY;
+
+            mHighlightRect.set(0, y, mSize.x, y + mSymbolSize.y);
+            canvas.drawRect(mHighlightRect, mPaintHighlight);
+            
+            mHighlightRect.set(x, 0, x + mSymbolSize.x, mSize.y);
+            canvas.drawRect(mHighlightRect, mPaintHighlight);
+        }
+        
         for (int w = 0; w < mMainNet.GetSize().x; w++) {
             for (int h = 0; h < mMainNet.GetSize().y; h++) {
                 mSymbol[0] = mMainNet.mNetCharacters[w][h];
@@ -85,58 +114,51 @@ public class CNetView extends View {
                         mFirst.y + (mSymbolSize.y * h), mPaint);
             }
         }
-        
-        if (mHighlightX != -1) {
-            int x = mSymbolSize.x * mHighlightX;
-            int y = mSymbolSize.y * mHighlightY;
-            
-            mHighlightRect.set(x, y, x + mSymbolSize.x, y + mSymbolSize.y);
-            canvas.drawRect(mHighlightRect, mPaint);
+    }
+    
+    public void onDraw(Canvas canvas) {
+        if (mMainActivity.GetSelectedTool() == DrawSMS.Tool.MOVE && mMoveNet != null) {
+            onDrawMoveNet(canvas);
+        } else {
+            onDrawMainNet(canvas);
         }
-        
-        if (mMainActivity.GetSelectedTool() == MainActivity.Tool.MOVE) {
-            if (mMoveNet != null) {
-                for (int w = 0; w < mMoveNet.GetSize().x; w++) {
-                    for (int h = 0; h < mMoveNet.GetSize().y; h++) {
-                        mSymbol[0] = mMoveNet.mNetCharacters[w][h];
-                        canvas.drawText(mSymbol, 0, 1, mFirst.x + (mSymbolSize.x * w),
-                                mFirst.y + (mSymbolSize.y * h), mPaintMove);
-                    }
-                }
-            }
-        }
-             
-             
-             
+
         super.onDraw(canvas);
     }
 
     public boolean onTouchEvent(MotionEvent event) {
         if (event.getAction() == MotionEvent.ACTION_MOVE) {
-            HighlightAt(event.getX(), event.getY());
-            
-            if (mMainActivity.GetSelectedTool() == MainActivity.Tool.MOVE) 
+            if (mMainActivity.GetSelectedTool() == DrawSMS.Tool.MOVE) {
                 MoveNet(GetIndexX(event.getX()), GetIndexY(event.getY()));
-       
+            } else {
+                HighlightAt(event.getX(), event.getY());
+            }
+
+            postInvalidate();
+
             return true;
         } else if (event.getAction() == MotionEvent.ACTION_DOWN) {
-            HighlightAt(event.getX(), event.getY());
+            if (mMainActivity.GetSelectedTool() != DrawSMS.Tool.MOVE) {
+                HighlightAt(event.getX(), event.getY());
+            }
+
+            postInvalidate();
             mDownPoint.set(GetIndexX(event.getX()), GetIndexY(event.getY()));
             return true;
         } else if (event.getAction() == MotionEvent.ACTION_UP) {
-           
-            if (!mFlag) {
-                mFlag = true;
+            if (mMainActivity.IsHistoryEmpty()) {
                 mMainActivity.AddHistory();
             }
-            
+
             HighlightAt(-1, -1);
             SetCharAt(event.getX(), event.getY());
             mMainActivity.AddHistory();
             mMainActivity.UpdateButtons();
+            postInvalidate();
             return true;
         } else if (event.getAction() == MotionEvent.ACTION_OUTSIDE) {
             HighlightAt(-1, -1);
+            postInvalidate();
         }
 
         return false;
@@ -166,14 +188,12 @@ public class CNetView extends View {
             return;
         }
 
-        if (mMainActivity.GetSelectedTool() == MainActivity.Tool.ERASE) {
+        if (mMainActivity.GetSelectedTool() == DrawSMS.Tool.ERASE) {
             mMainNet.mNetCharacters[IndexX][IndexY] = ' ';
-        } 
-        else if (mMainActivity.GetSelectedTool() == MainActivity.Tool.MOVE) {
+        } else if (mMainActivity.GetSelectedTool() == DrawSMS.Tool.MOVE) {
             mMainNet.CopyFrom(mMoveNet);
             mMoveNet = null;
-        }
-        else {
+        } else {
             mMainNet.mNetCharacters[IndexX][IndexY] = mMainActivity.GetSelectedSymbol();
         }
 
@@ -191,8 +211,6 @@ public class CNetView extends View {
         if (IndexX < 0 || IndexY < 0) {
             mHighlightX = -1;
         }
-
-        postInvalidate();
     }
 
     private void MoveNet(float x, float y) {
@@ -200,7 +218,7 @@ public class CNetView extends View {
         int ShiftY = (int) (mDownPoint.y - y);
 
         if (mMoveNet == null) {
-            mMoveNet = new CNet(mMainNet.GetSize().x, mMainNet.GetSize().y);
+            mMoveNet = new CNet();
         }
 
         mMoveNet.Move(mMainNet, ShiftX, ShiftY);

@@ -2,7 +2,7 @@
  * To change this template, choose Tools | Templates
  * and open the template in the editor.
  */
-package test.nba;
+package com.kurovsky.drawsms;
 
 import android.content.Context;
 import android.graphics.Color;
@@ -10,15 +10,11 @@ import android.util.AttributeSet;
 import android.widget.Checkable;
 import android.widget.LinearLayout;
 
-/**
- *
- * @author Kate
- */
 public class CheckableLinearLayout extends LinearLayout implements Checkable {
 
     private boolean checked = false;
     private static final int[] CHECKED_STATE_SET = {android.R.attr.state_checked};
-
+    
     public CheckableLinearLayout(Context context) {
         super(context);
     }
@@ -29,8 +25,8 @@ public class CheckableLinearLayout extends LinearLayout implements Checkable {
 
     protected int[] onCreateDrawableState(int extraSpace) {
         final int[] drawableState = super.onCreateDrawableState(extraSpace + 1);
-        if (isChecked()) 
-            mergeDrawableStates(drawableState, CHECKED_STATE_SET);
+     //   if (isChecked()) 
+        //    mergeDrawableStates(drawableState, CHECKED_STATE_SET);
         return drawableState;
     }
 

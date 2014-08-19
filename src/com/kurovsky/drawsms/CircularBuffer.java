@@ -2,14 +2,10 @@
  * To change this template, choose Tools | Templates
  * and open the template in the editor.
  */
-package test.nba;
+package com.kurovsky.drawsms;
 
-import java.util.Arrays;
+import android.content.SharedPreferences;
 
-/**
- *
- * @author Kate
- */
 public class CircularBuffer<E> {
     private E[] mElements;
     private int mCursor = -1;
@@ -21,7 +17,11 @@ public class CircularBuffer<E> {
         mElements = (E[]) new Object[maxElements];
         mMaxElements = mElements.length;
     }
-
+    
+    boolean IsEmpty(){
+        return mCursor == -1;
+    }
+            
     public void Add(E element) {
         mIsNextAvailable = false;
         
@@ -36,7 +36,7 @@ public class CircularBuffer<E> {
     }
 
     public E Prev() {
-        mIsNextAvailable = true;
+          mIsNextAvailable = true;
         if ((mCursor - 1) < 0) {
             mCursor = mMaxElements;
         }
@@ -70,5 +70,38 @@ public class CircularBuffer<E> {
 
     public boolean IsNextExists() {
         return mIsNextAvailable;
+    }
+    
+    void Store(SharedPreferences.Editor prefsEditor) {
+        prefsEditor.putInt("HistoryCursor", mCursor);
+        prefsEditor.putInt("HistoryLastAddedCursor", mLastAddedCursor);
+        prefsEditor.putBoolean("HistoryIsNextAvailable", mIsNextAvailable);
+
+        for (int i = 0; i < mMaxElements; i++) {
+            if (mElements[i] == null) {
+                prefsEditor.putString("HistoryNet" + String.valueOf(i), "null");
+            } else {
+                CNet net = (CNet) mElements[i];
+                net.Store(prefsEditor, "HistoryNet" + String.valueOf(i));
+            }
+        }
+    }
+
+    void Restore(SharedPreferences prefs) {
+        mCursor = prefs.getInt("HistoryCursor", -1);
+        mLastAddedCursor = prefs.getInt("HistoryLastAddedCursor", mLastAddedCursor);
+        mIsNextAvailable = prefs.getBoolean("HistoryIsNextAvailable", false);
+        
+        for (int i = 0; i < mMaxElements; i++) {
+            String string = prefs.getString("HistoryNet" + String.valueOf(i), "null");
+
+            if (string.contentEquals("null")) {
+                mElements[i] = null;
+            } else {
+                CNet net = new CNet();
+                net.Restore(prefs, "HistoryNet" + String.valueOf(i));
+                mElements[i] = (E) net;
+            }
+        }
     }
 }

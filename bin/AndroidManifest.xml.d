@@ -1,2 +1,2 @@
-C:\Users\Kate\Documents\NetBeansProjects\AndroidApplication1\bin\AndroidManifest.xml : \
-C:\Users\Kate\Documents\NetBeansProjects\AndroidApplication1\AndroidManifest.xml \
+C:\DrawSMS\AndroidApplication1\bin\AndroidManifest.xml : \
+C:\DrawSMS\AndroidApplication1\AndroidManifest.xml \

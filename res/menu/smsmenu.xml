@@ -1,9 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
 <menu xmlns:android="http://schemas.android.com/apk/res/android">
-    <item android:id="@+id/send_sms"
+    <!--<item android:id="@+id/send_sms"
           android:title="@string/send_sms_label"/>
+    <item android:id="@+id/view_sms"
+      android:title="@string/view_sms_label"/>-->
     <item android:id="@+id/open"
-          android:title="@string/load_label"/>
-    <item android:id="@+id/save"
-          android:title="@string/save_label"/>
+          android:title="@string/loadtext_label"/>
+        <item android:id="@+id/save"
+          android:title="@string/savetext_label"/>
 </menu>
